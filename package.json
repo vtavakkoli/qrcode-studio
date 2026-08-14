@@ -1,13 +1,13 @@
 {
   "name": "qr-code-studio",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "private": true,
-  "description": "Private, offline, dependency-free QR code generator shipped as one standalone HTML file.",
+  "description": "Privacy-first, offline QR code and Code 128 barcode generator shipped as one standalone HTML file.",
   "type": "module",
   "scripts": {
     "build": "node scripts/build.mjs",
-    "lint": "node --check src/qr-core.js && node --check src/app.js && node scripts/lint.mjs",
-    "test": "node test/qr-core.test.mjs && node test/repository.test.mjs",
+    "lint": "node --check src/qr-core.js && node --check src/barcode-core.js && node --check src/app.js && node --check src/enhancements.js && node scripts/lint.mjs",
+    "test": "node test/qr-core.test.mjs && node test/barcode-core.test.mjs && node test/repository.test.mjs",
     "check": "npm run build && npm run lint && npm test",
     "serve": "node scripts/serve.mjs"
   },

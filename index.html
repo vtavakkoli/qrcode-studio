@@ -4,10 +4,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Private, offline, dependency-free QR code generator with PNG and SVG export.">
+  <meta name="description" content="Private, offline QR code and Code 128 barcode generator with PNG and SVG export.">
   <meta name="referrer" content="no-referrer">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
-  <meta name="theme-color" content="#0cad84">
+  <meta name="theme-color" content="#d63384">
   <title>QR Code Studio — Private Offline Generator</title>
   <style>
 :root {
@@ -252,6 +252,59 @@ input[type="color"] { padding: 4px; }
   .preview-box { border: 0; box-shadow: none; padding: 0; min-height: 0; }
   .preview-box svg { width: 100%; max-height: 240mm; }
 }
+
+/* Pink visual identity layered over the base design. */
+:root {
+  --accent: #d63384;
+  --accent-dark: #9d195f;
+  --accent-soft: #fff0f6;
+  --focus: 0 0 0 4px rgba(214, 51, 132, .17);
+}
+
+body {
+  background: linear-gradient(135deg, #fff9fc 0, #f6f7fb 52%, #fff3f8 100%);
+}
+
+::selection { background: #ffd6e8; color: #5e153c; }
+
+.brandmark {
+  background: linear-gradient(135deg, #f255a1, #b8206d);
+  box-shadow: 0 10px 25px rgba(214, 51, 132, .24);
+}
+
+.privacy-badge {
+  border-color: #f2c4da;
+  background: #fff5fa;
+  color: var(--accent-dark);
+}
+
+.active .ico { background: #ffe0ed; color: var(--accent-dark); }
+input:focus, textarea:focus, select:focus { border-color: #e98ab8; }
+.quality-label { background: #ffe4f0; color: var(--accent-dark); }
+
+.type-btn.active,
+.tab.active,
+.option.active {
+  box-shadow: inset 0 0 0 1px var(--accent), 0 5px 14px rgba(214, 51, 132, .07);
+}
+
+.barcode-mode #tab-shape,
+.barcode-mode #tab-logo,
+.barcode-mode #panel-shape,
+.barcode-mode #panel-logo,
+.barcode-mode .advanced > div:nth-child(1),
+.barcode-mode .advanced > div:nth-child(2) {
+  display: none !important;
+}
+
+.barcode-mode .advanced { grid-template-columns: minmax(220px, 360px); }
+.barcode-mode .preview-box { min-height: 300px; }
+.barcode-mode .preview-box svg { max-height: 300px; }
+.barcode-mode .pill { border-color: #f0c7dc; background: #fff7fb; color: var(--accent-dark); }
+
+@media (max-width: 650px) {
+  .barcode-mode .advanced { grid-template-columns: 1fr; }
+}
   </style>
 </head>
 <body>
@@ -264,7 +317,7 @@ input[type="color"] { padding: 4px; }
           <div class="brandmark" aria-hidden="true">QR</div>
           <div>
             <h1>QR Code Studio</h1>
-            <p>Private, offline, single-file QR generator — nothing leaves your browser.</p>
+            <p>Private, offline, single-file QR & barcode generator — nothing leaves your browser.</p>
           </div>
         </div>
         <div class="privacy-badge" title="This application makes no network requests"><span aria-hidden="true">●</span> Local-only processing</div>
@@ -810,6 +863,116 @@ class QRCode {
     return z & 0xff;
   }
 }
+
+/* Dependency-free Code 128-B encoder and SVG renderer. */
+const Barcode128 = (() => {
+  const PATTERNS = [
+    '212222','222122','222221','121223','121322','131222','122213','122312','132212','221213','221312','231212',
+    '112232','122132','122231','113222','123122','123221','223211','221132','221231','213212','223112','312131',
+    '311222','321122','321221','312212','322112','322211','212123','212321','232121','111323','131123','131321',
+    '112313','132113','132311','211313','231113','231311','112133','112331','132131','113123','113321','133121',
+    '313121','211331','231131','213113','213311','213131','311123','311321','331121','312113','312311','332111',
+    '314111','221411','431111','111224','111422','121124','121421','141122','141221','112214','112412','122114',
+    '122411','142112','142211','241211','221114','413111','241112','134111','111242','121142','121241','114212',
+    '124112','124211','411212','421112','421211','212141','214121','412121','111143','111341','131141','114113',
+    '114311','411113','411311','113141','114131','311141','411131','211412','211214','211232','2331112',
+  ];
+
+  const START_B = 104;
+  const STOP = 106;
+  const MAX_LENGTH = 120;
+
+  function xmlEscape(value = '') {
+    return String(value).replace(/[&<>"']/g, (char) => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;',
+    }[char]));
+  }
+
+  function encode(text) {
+    const value = String(text ?? '');
+    if (!value) throw new Error('Enter barcode content.');
+    if (value.length > MAX_LENGTH) throw new Error(`Code 128 barcode content is limited to ${MAX_LENGTH} characters for reliable output.`);
+
+    const dataCodes = [];
+    for (const character of value) {
+      const codePoint = character.codePointAt(0);
+      if (codePoint < 32 || codePoint > 126) {
+        throw new Error('Code 128 currently supports printable ASCII characters from space through ~.');
+      }
+      dataCodes.push(codePoint - 32);
+    }
+
+    let checksum = START_B;
+    dataCodes.forEach((code, index) => { checksum += code * (index + 1); });
+    checksum %= 103;
+
+    const codes = [START_B, ...dataCodes, checksum, STOP];
+    const patterns = codes.map((code) => PATTERNS[code]);
+    const modules = patterns.reduce((sum, pattern) => (
+      sum + [...pattern].reduce((patternSum, digit) => patternSum + Number(digit), 0)
+    ), 0);
+
+    return { text: value, codes, checksum, patterns, modules };
+  }
+
+  function toSvg(text, options = {}) {
+    const encoded = encode(text);
+    const foreground = options.foreground || '#17233f';
+    const background = options.background || '#ffffff';
+    const frame = ['none', 'border', 'label'].includes(options.frame) ? options.frame : 'none';
+    const frameText = String(options.frameText || 'SCAN ME').trim().slice(0, 32);
+    const quiet = Math.max(10, Number(options.quiet) || 10);
+    const framePadding = frame === 'none' ? 0 : 4;
+    const barsHeight = 70;
+    const textBand = 15;
+    const labelBand = frame === 'label' ? 13 : 0;
+    const width = encoded.modules + quiet * 2 + framePadding * 2;
+    const height = barsHeight + textBand + labelBand + framePadding * 2;
+    const startX = quiet + framePadding;
+    const startY = framePadding;
+    const accessibleText = encoded.text.length > 80 ? `${encoded.text.slice(0, 77)}...` : encoded.text;
+
+    let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="1200" height="${Math.round(1200 * height / width)}" role="img" aria-label="${xmlEscape(`Code 128 barcode for ${accessibleText}`)}" shape-rendering="crispEdges">`;
+    svg += `<rect width="${width}" height="${height}" fill="${background}"/>`;
+    if (frame !== 'none') {
+      svg += `<rect x="0.8" y="0.8" width="${width - 1.6}" height="${height - 1.6}" rx="3" fill="none" stroke="${foreground}" stroke-width="0.8"/>`;
+    }
+
+    let cursor = startX;
+    for (const pattern of encoded.patterns) {
+      let bar = true;
+      for (const digit of pattern) {
+        const segment = Number(digit);
+        if (bar) svg += `<rect x="${cursor}" y="${startY}" width="${segment}" height="${barsHeight}" fill="${foreground}"/>`;
+        cursor += segment;
+        bar = !bar;
+      }
+    }
+
+    const textY = startY + barsHeight + 10.5;
+    const textSize = Math.max(5, Math.min(9, width / Math.max(18, encoded.text.length * 1.7)));
+    svg += `<text x="${width / 2}" y="${textY}" text-anchor="middle" fill="${foreground}" font-family="Arial,Helvetica,sans-serif" font-size="${textSize}" font-weight="600" shape-rendering="geometricPrecision">${xmlEscape(encoded.text)}</text>`;
+
+    if (frame === 'label' && frameText) {
+      svg += `<text x="${width / 2}" y="${height - 4.2}" text-anchor="middle" fill="${foreground}" font-family="Arial,Helvetica,sans-serif" font-size="6.2" font-weight="800" letter-spacing="0.25" shape-rendering="geometricPrecision">${xmlEscape(frameText)}</text>`;
+    }
+
+    return `${svg}</svg>`;
+  }
+
+  function placeholderSvg() {
+    const bars = [2,1,1,3,1,2,2,2,1,1,3,1,2,1,2,3,1,1,1,3,2,2,1,2,1,1,3,2,1,2,2,1];
+    let x = 12;
+    let svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 78" aria-hidden="true"><rect width="150" height="78" fill="#fff"/><g fill="#cfd6dd">';
+    bars.forEach((width, index) => {
+      if (index % 2 === 0) svg += `<rect x="${x}" y="10" width="${width * 2}" height="48"/>`;
+      x += width * 2;
+    });
+    return `${svg}</g><rect x="40" y="65" width="70" height="4" rx="2" fill="#dce2e8"/></svg>`;
+  }
+
+  return Object.freeze({ encode, toSvg, placeholderSvg, maxLength: MAX_LENGTH });
+})();
 /* QR Code Studio application. No network calls, analytics, or external dependencies. */
 const TYPES = [
   { id: 'link', icon: '↗', label: 'Link' },
@@ -1600,6 +1763,150 @@ renderFields();
 syncDesignControls();
 wire();
 update();
+
+/* QR Code Studio v2.1 enhancements: native Code 128 barcode mode and adaptive UI. */
+(() => {
+  const baseUpdate = update;
+  const baseExportBaseName = exportBaseName;
+
+  const barcodeType = TYPES.find((item) => item.id === 'barcode');
+  if (barcodeType) {
+    barcodeType.icon = '▥';
+    barcodeType.label = 'Barcode';
+  }
+  SCHEMAS.barcode = {
+    fields: [field('text', 'Barcode data', 'text', 'SKU-2026-001', { full: true, required: true })],
+  };
+
+  const barcodeButton = document.querySelector('[data-type="barcode"]');
+  if (barcodeButton) {
+    const icon = barcodeButton.querySelector('.ico');
+    const label = barcodeButton.querySelector('span:last-child');
+    if (icon) icon.textContent = '▥';
+    if (label) label.textContent = 'Barcode';
+  }
+  $('#typeGrid')?.setAttribute('aria-label', 'Generator content type');
+
+  function isBarcodeMode() {
+    return state.type === 'barcode';
+  }
+
+  function setStaticText(id, text) {
+    const element = $(`#${id}`);
+    if (element) element.textContent = text;
+  }
+
+  function refreshModeUi() {
+    const barcodeMode = isBarcodeMode();
+    document.body.classList.toggle('barcode-mode', barcodeMode);
+    setStaticText('design-title', barcodeMode ? 'Design your barcode' : 'Design your QR code');
+
+    const previewTitle = $('#download-title');
+    if (previewTitle) {
+      previewTitle.innerHTML = `<span class="stepnum" aria-hidden="true">3</span>${barcodeMode ? 'Download barcode' : 'Download QR code'}`;
+    }
+
+    const downloadButton = $('#downloadPng');
+    if (downloadButton) downloadButton.textContent = barcodeMode ? '↓ Download barcode PNG' : '↓ Download PNG';
+    const svgButton = $('#downloadSvg');
+    if (svgButton) svgButton.textContent = barcodeMode ? 'Download barcode SVG' : 'Download SVG';
+    const printButton = $('#printQr');
+    if (printButton) printButton.textContent = barcodeMode ? 'Print barcode' : 'Print';
+
+    const meta = $$('.meta-strip > div');
+    if (meta[0]) {
+      meta[0].innerHTML = barcodeMode
+        ? '<strong>Symbology</strong>Code 128-B'
+        : '<strong>Generation</strong>Automatic best mask';
+    }
+
+    if (barcodeMode) {
+      const selectedTab = $('.tab[aria-selected="true"]');
+      if (selectedTab?.id === 'tab-shape' || selectedTab?.id === 'tab-logo') activateTab($('#tab-frame'));
+    }
+  }
+
+  function updateBarcodeQualityUi() {
+    const ratio = contrastRatio(state.fg, state.bg);
+    const darkOnLight = relativeLuminance(state.fg) < relativeLuminance(state.bg);
+    const excellent = ratio >= 7 && darkOnLight;
+    const good = ratio >= 4.5 && darkOnLight;
+    const label = excellent ? 'Excellent' : good ? 'Good' : 'Risky';
+    $('#contrastValue').textContent = `${ratio.toFixed(1)}:1`;
+    $('#qualityLabel').textContent = label;
+    $('#qualityLabel').dataset.level = label.toLowerCase();
+    $('#qualityHint').textContent = darkOnLight
+      ? (ratio >= 4.5 ? 'High-contrast bars with Code 128 quiet zones.' : 'Increase foreground/background contrast for reliable barcode scanning.')
+      : 'Use dark bars on a lighter background for reliable barcode scanning.';
+  }
+
+  function renderBarcode() {
+    const { value: payloadValue, error } = buildPayload();
+    state.payload = payloadValue;
+    setError(error);
+    updateBarcodeQualityUi();
+    saveDesign();
+    refreshModeUi();
+
+    const preview = $('#preview');
+    if (!payloadValue || error) {
+      state.qr = null;
+      state.svg = '';
+      preview.classList.add('placeholder');
+      preview.innerHTML = Barcode128.placeholderSvg();
+      setExportEnabled(false);
+      $('#statusDot').className = `dot${error ? ' error' : ''}`;
+      $('#statusText').textContent = error || 'Enter content to generate a barcode';
+      $('#qrMeta').textContent = 'CODE 128';
+      return;
+    }
+
+    try {
+      const encoded = Barcode128.encode(payloadValue);
+      state.qr = null;
+      state.svg = Barcode128.toSvg(payloadValue, {
+        foreground: state.fg,
+        background: state.bg,
+        frame: state.frame,
+        frameText: state.frameText,
+      });
+      preview.innerHTML = state.svg;
+      preview.classList.remove('placeholder');
+      setExportEnabled(true);
+      $('#statusDot').className = 'dot ready';
+      $('#statusText').textContent = 'Barcode ready to scan';
+      $('#qrMeta').textContent = `CODE 128 · ${encoded.modules} modules`;
+    } catch (exception) {
+      state.qr = null;
+      state.svg = '';
+      preview.innerHTML = Barcode128.placeholderSvg();
+      preview.classList.add('placeholder');
+      setExportEnabled(false);
+      $('#statusDot').className = 'dot error';
+      $('#statusText').textContent = 'Cannot generate barcode';
+      $('#qrMeta').textContent = 'CODE 128';
+      setError(exception?.message || 'Unable to generate this barcode.');
+    }
+  }
+
+  update = function enhancedUpdate() {
+    if (isBarcodeMode()) {
+      renderBarcode();
+      return;
+    }
+    baseUpdate();
+    refreshModeUi();
+  };
+
+  exportBaseName = function enhancedExportBaseName() {
+    return isBarcodeMode() ? 'barcode-code128' : baseExportBaseName();
+  };
+
+  const brandDescription = document.querySelector('.brand p');
+  if (brandDescription) brandDescription.textContent = 'Private, offline QR & barcode generator — nothing leaves your browser.';
+
+  refreshModeUi();
+})();
 </script>
 </body>
 </html>

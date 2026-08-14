@@ -4,6 +4,29 @@ All notable changes to this project are documented here.
 
 The format follows Keep a Changelog conventions and the project uses semantic versioning for releases.
 
+## [2.1.0] - 2026-08-14
+
+### Added
+
+- Native dependency-free Code 128-B barcode encoder with modulo-103 checksum generation.
+- Genuine linear barcode SVG rendering, quiet zones, human-readable text, PNG/SVG export, and printing.
+- Barcode-specific automated tests covering symbol sequence, checksum stability, input validation, and standalone SVG safety.
+- Pink product theme with accessible focus treatment and barcode-aware responsive layout.
+- Dedicated barcode documentation and updated architecture/repository guidance.
+
+### Changed
+
+- Renamed the former `2D Data` option to `Barcode`.
+- Barcode content is no longer passed to the QR encoder.
+- QR-only controls (shape, logo, ECC, QR quiet-zone setting) are hidden while Barcode mode is active.
+- Preview headings, download actions, metadata, status messages, and export filenames adapt automatically between QR and barcode modes.
+- Package version and quality gate updated for the new barcode engine.
+
+### Fixed
+
+- Prevented users from receiving a QR code when they explicitly select barcode generation.
+- Removed the green product accent in favor of the requested pink visual identity.
+
 ## [2.0.0] - 2026-08-14
 
 ### Added

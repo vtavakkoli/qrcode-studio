@@ -4,18 +4,26 @@ import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, '..');
-const [template, styles, core, app] = await Promise.all([
+const [templateSource, styles, pinkTheme, qrCore, barcodeCore, app, enhancements] = await Promise.all([
   readFile(join(root, 'src/template.html'), 'utf8'),
   readFile(join(root, 'src/styles.css'), 'utf8'),
+  readFile(join(root, 'src/theme-pink.css'), 'utf8'),
   readFile(join(root, 'src/qr-core.js'), 'utf8'),
+  readFile(join(root, 'src/barcode-core.js'), 'utf8'),
   readFile(join(root, 'src/app.js'), 'utf8'),
+  readFile(join(root, 'src/enhancements.js'), 'utf8'),
 ]);
 
 const safeScript = (source) => source.replace(/<\/script/gi, '<\\/script');
+const template = templateSource
+  .replace(/#0cad84/gi, '#d63384')
+  .replace('Private, offline, dependency-free QR code generator with PNG and SVG export.', 'Private, offline QR code and Code 128 barcode generator with PNG and SVG export.')
+  .replace('Private, offline, single-file QR generator — nothing leaves your browser.', 'Private, offline, single-file QR & barcode generator — nothing leaves your browser.');
+
 let html = template
-  .replace('/*__STYLES__*/', () => styles.trim())
-  .replace('/*__QR_CORE__*/', () => safeScript(core.trim()))
-  .replace('/*__APP__*/', () => safeScript(app.trim()));
+  .replace('/*__STYLES__*/', () => `${styles.trim()}\n\n${pinkTheme.trim()}`)
+  .replace('/*__QR_CORE__*/', () => safeScript(`${qrCore.trim()}\n\n${barcodeCore.trim()}`))
+  .replace('/*__APP__*/', () => safeScript(`${app.trim()}\n\n${enhancements.trim()}`));
 
 if (/\/\*__(STYLES|QR_CORE|APP)__\*\//.test(html)) {
   throw new Error('Build failed: unresolved template placeholder.');

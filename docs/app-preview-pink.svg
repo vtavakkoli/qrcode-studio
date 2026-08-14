@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">QR Code Studio pink interface preview</title>
+  <desc id="desc">Stylized preview of the QR Code Studio interface with pink accents and a Code 128 barcode preview.</desc>
+  <rect width="1280" height="720" rx="28" fill="#f7f8fb"/>
+  <rect x="24" y="24" width="1232" height="672" rx="24" fill="#ffffff" stroke="#e4e8ef"/>
+  <rect x="24" y="24" width="844" height="672" rx="24" fill="#fbfcfe"/>
+  <rect x="64" y="62" width="46" height="46" rx="14" fill="#d63384"/>
+  <text x="87" y="91" text-anchor="middle" font-family="Arial,sans-serif" font-size="17" font-weight="800" fill="#fff">QR</text>
+  <text x="126" y="82" font-family="Arial,sans-serif" font-size="24" font-weight="800" fill="#17233f">QR Code Studio</text>
+  <text x="126" y="103" font-family="Arial,sans-serif" font-size="13" fill="#66768f">Private, offline QR &amp; barcode generator</text>
+  <rect x="64" y="132" width="764" height="128" rx="18" fill="#fff" stroke="#dbe5ef"/>
+  <g font-family="Arial,sans-serif" font-size="14" font-weight="700" fill="#17233f">
+    <rect x="80" y="148" width="134" height="44" rx="11" fill="#fff0f6" stroke="#d63384"/>
+    <text x="147" y="176" text-anchor="middle" fill="#9d195f">Link</text>
+    <text x="270" y="176">Text</text><text x="386" y="176">E-mail</text><text x="505" y="176">Wi-Fi</text><text x="622" y="176">V-card</text>
+    <text x="100" y="230">Event</text><text x="220" y="230">Social</text><text x="350" y="230">Video</text><text x="465" y="230">Location</text>
+    <rect x="600" y="202" width="188" height="42" rx="11" fill="#fff0f6" stroke="#d63384"/>
+    <text x="694" y="228" text-anchor="middle" fill="#9d195f">▥ Barcode</text>
+  </g>
+  <text x="64" y="310" font-family="Arial,sans-serif" font-size="22" font-weight="800" fill="#17233f">1  Complete the content</text>
+  <rect x="64" y="334" width="764" height="100" rx="16" fill="#fff" stroke="#dbe5ef"/>
+  <text x="86" y="364" font-family="Arial,sans-serif" font-size="13" font-weight="700" fill="#17233f">Barcode data</text>
+  <rect x="86" y="378" width="720" height="40" rx="10" fill="#fff" stroke="#e0a5c2"/>
+  <text x="102" y="403" font-family="Arial,sans-serif" font-size="14" fill="#66768f">SKU-2026-001</text>
+  <text x="64" y="486" font-family="Arial,sans-serif" font-size="22" font-weight="800" fill="#17233f">2  Design your barcode</text>
+  <rect x="64" y="510" width="764" height="124" rx="16" fill="#fff" stroke="#dbe5ef"/>
+  <rect x="86" y="530" width="100" height="36" rx="9" fill="#fff0f6" stroke="#d63384"/>
+  <text x="136" y="553" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" font-weight="800" fill="#9d195f">Frame</text>
+  <rect x="196" y="530" width="100" height="36" rx="9" fill="#fff" stroke="#dbe5ef"/>
+  <text x="246" y="553" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" font-weight="800" fill="#17233f">Colors</text>
+  <rect x="900" y="68" width="320" height="568" rx="18" fill="#fff" stroke="#dbe5ef"/>
+  <text x="926" y="112" font-family="Arial,sans-serif" font-size="22" font-weight="800" fill="#17233f">3  Download barcode</text>
+  <rect x="926" y="142" width="268" height="292" rx="16" fill="#fff" stroke="#dbe5ef"/>
+  <g fill="#17233f">
+    <rect x="950" y="214" width="4" height="120"/><rect x="958" y="214" width="2" height="120"/><rect x="965" y="214" width="7" height="120"/>
+    <rect x="979" y="214" width="3" height="120"/><rect x="987" y="214" width="5" height="120"/><rect x="998" y="214" width="2" height="120"/>
+    <rect x="1007" y="214" width="8" height="120"/><rect x="1021" y="214" width="3" height="120"/><rect x="1031" y="214" width="6" height="120"/>
+    <rect x="1044" y="214" width="2" height="120"/><rect x="1051" y="214" width="4" height="120"/><rect x="1062" y="214" width="7" height="120"/>
+    <rect x="1075" y="214" width="3" height="120"/><rect x="1085" y="214" width="6" height="120"/><rect x="1098" y="214" width="2" height="120"/>
+    <rect x="1106" y="214" width="8" height="120"/><rect x="1120" y="214" width="3" height="120"/><rect x="1131" y="214" width="5" height="120"/>
+    <rect x="1142" y="214" width="2" height="120"/><rect x="1150" y="214" width="7" height="120"/><rect x="1164" y="214" width="4" height="120"/>
+  </g>
+  <text x="1060" y="360" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="700" fill="#17233f">SKU-2026-001</text>
+  <rect x="926" y="474" width="268" height="52" rx="12" fill="#263653"/>
+  <text x="1060" y="507" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="800" fill="#fff">Download barcode PNG</text>
+  <rect x="926" y="542" width="128" height="42" rx="10" fill="#fff" stroke="#dbe5ef"/>
+  <rect x="1066" y="542" width="128" height="42" rx="10" fill="#fff" stroke="#dbe5ef"/>
+  <text x="990" y="568" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" font-weight="700" fill="#17233f">Download SVG</text>
+  <text x="1130" y="568" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" font-weight="700" fill="#17233f">Print</text>
+</svg>
