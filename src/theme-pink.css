@@ -1,0 +1,52 @@
+/* Pink visual identity layered over the base design. */
+:root {
+  --accent: #d63384;
+  --accent-dark: #9d195f;
+  --accent-soft: #fff0f6;
+  --focus: 0 0 0 4px rgba(214, 51, 132, .17);
+}
+
+body {
+  background: linear-gradient(135deg, #fff9fc 0, #f6f7fb 52%, #fff3f8 100%);
+}
+
+::selection { background: #ffd6e8; color: #5e153c; }
+
+.brandmark {
+  background: linear-gradient(135deg, #f255a1, #b8206d);
+  box-shadow: 0 10px 25px rgba(214, 51, 132, .24);
+}
+
+.privacy-badge {
+  border-color: #f2c4da;
+  background: #fff5fa;
+  color: var(--accent-dark);
+}
+
+.active .ico { background: #ffe0ed; color: var(--accent-dark); }
+input:focus, textarea:focus, select:focus { border-color: #e98ab8; }
+.quality-label { background: #ffe4f0; color: var(--accent-dark); }
+
+.type-btn.active,
+.tab.active,
+.option.active {
+  box-shadow: inset 0 0 0 1px var(--accent), 0 5px 14px rgba(214, 51, 132, .07);
+}
+
+.barcode-mode #tab-shape,
+.barcode-mode #tab-logo,
+.barcode-mode #panel-shape,
+.barcode-mode #panel-logo,
+.barcode-mode .advanced > div:nth-child(1),
+.barcode-mode .advanced > div:nth-child(2) {
+  display: none !important;
+}
+
+.barcode-mode .advanced { grid-template-columns: minmax(220px, 360px); }
+.barcode-mode .preview-box { min-height: 300px; }
+.barcode-mode .preview-box svg { max-height: 300px; }
+.barcode-mode .pill { border-color: #f0c7dc; background: #fff7fb; color: var(--accent-dark); }
+
+@media (max-width: 650px) {
+  .barcode-mode .advanced { grid-template-columns: 1fr; }
+}
