@@ -170,7 +170,13 @@ Important design choices include:
 
 ## CI and releases
 
-GitHub Actions validates the source and standalone artifact on pushes and pull requests. An optional manual Pages workflow can deploy `index.html`, and tagged releases can publish a small distribution archive containing `index.html`, license, notice, and README.
+GitHub Actions validates the source and standalone artifact on pushes and pull requests. Every push to `main` (or `master`) automatically builds, verifies, and deploys the standalone `index.html` to GitHub Pages; the Pages workflow can also be started manually from the Actions tab. Tagged releases publish a small distribution archive containing `index.html`, license, notice, and README.
+
+### Enable automatic GitHub Pages deployment
+
+After pushing this repository to GitHub, open **Settings → Pages** and set **Source** to **GitHub Actions**. Do not select "Deploy from a branch" when using the included Pages workflow. Leave **Custom domain** empty unless you own and have configured a real DNS domain such as `qr.example.com`.
+
+The deployment workflow is `.github/workflows/pages.yml`. It runs `npm run check`, packages the generated standalone application as a Pages artifact, and deploys it to the protected `github-pages` environment.
 
 ## Browser support
 
