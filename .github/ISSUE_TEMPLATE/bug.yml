@@ -1,0 +1,46 @@
+name: Bug report
+description: Report a reproducible problem with QR Code Studio
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: "Please do not include credentials, private QR payloads, or personal information."
+  - type: textarea
+    id: description
+    attributes:
+      label: Problem
+      description: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      placeholder: "1. Choose Link\n2. Enter example.com\n3. ..."
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and version
+      placeholder: "Chrome 151 / Firefox ..."
+    validations:
+      required: true
+  - type: dropdown
+    id: runmode
+    attributes:
+      label: How are you running it?
+      options:
+        - Local index.html file
+        - Local server
+        - GitHub Pages/static host
+        - Docker
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional context
+      description: Screenshots are welcome if they contain no sensitive data.

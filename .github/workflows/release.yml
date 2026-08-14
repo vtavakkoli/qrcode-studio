@@ -1,0 +1,36 @@
+name: Release standalone bundle
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Validate
+        run: npm run check
+
+      - name: Package
+        run: |
+          mkdir qr-code-studio
+          cp index.html README.md LICENSE NOTICE.md qr-code-studio/
+          zip -r "qr-code-studio-${GITHUB_REF_NAME}.zip" qr-code-studio
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: qr-code-studio-${{ github.ref_name }}.zip

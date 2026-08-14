@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Private, offline, dependency-free QR code generator with PNG and SVG export.">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
+  <meta name="theme-color" content="#0cad84">
+  <title>QR Code Studio — Private Offline Generator</title>
+  <style>
+/*__STYLES__*/
+  </style>
+</head>
+<body>
+<a class="skip-link" href="#contentFields">Skip to QR content</a>
+<div class="app">
+  <main class="left">
+    <div class="work">
+      <div class="brand-row">
+        <div class="brand">
+          <div class="brandmark" aria-hidden="true">QR</div>
+          <div>
+            <h1>QR Code Studio</h1>
+            <p>Private, offline, single-file QR generator — nothing leaves your browser.</p>
+          </div>
+        </div>
+        <div class="privacy-badge" title="This application makes no network requests"><span aria-hidden="true">●</span> Local-only processing</div>
+      </div>
+
+      <nav id="typeGrid" class="type-grid" aria-label="QR code content type"></nav>
+
+      <section class="section" aria-labelledby="content-title">
+        <div class="step"><div class="stepnum" aria-hidden="true">1</div><h2 id="content-title">Complete the content</h2></div>
+        <div class="content-card">
+          <div id="contentFields" class="field-grid"></div>
+          <div id="payloadError" class="error-msg" role="alert"></div>
+          <div class="toolbar">
+            <button type="button" class="smallbtn" id="copyPayload">Copy payload</button>
+            <button type="button" class="smallbtn" id="clearForm">Clear current form</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="design-title">
+        <div class="step"><div class="stepnum" aria-hidden="true">2</div><h2 id="design-title">Design your QR code</h2></div>
+        <div class="design-tabs" role="tablist" aria-label="Design settings">
+          <button type="button" class="tab active" id="tab-frame" data-panel="frame" role="tab" aria-controls="panel-frame" aria-selected="true">Frame</button>
+          <button type="button" class="tab" id="tab-shape" data-panel="shape" role="tab" aria-controls="panel-shape" aria-selected="false" tabindex="-1">Shape</button>
+          <button type="button" class="tab" id="tab-logo" data-panel="logo" role="tab" aria-controls="panel-logo" aria-selected="false" tabindex="-1">Logo</button>
+          <button type="button" class="tab" id="tab-colors" data-panel="colors" role="tab" aria-controls="panel-colors" aria-selected="false" tabindex="-1">Colors</button>
+        </div>
+
+        <div class="design-panel active" id="panel-frame" role="tabpanel" aria-labelledby="tab-frame">
+          <div class="option-grid" id="frameOptions">
+            <button type="button" class="option active" data-value="none" aria-pressed="true"><strong>No frame</strong><span>Clean QR only</span></button>
+            <button type="button" class="option" data-value="border" aria-pressed="false"><strong>Border</strong><span>Subtle rounded frame</span></button>
+            <button type="button" class="option" data-value="label" aria-pressed="false"><strong>Call to action</strong><span>Frame with custom text</span></button>
+          </div>
+          <div class="frame-text" id="frameTextWrap" hidden>
+            <label for="frameText"><strong>Frame text</strong></label>
+            <input id="frameText" maxlength="32" value="SCAN ME" autocomplete="off">
+            <div class="hint">Up to 32 characters. Keep it short for the best visual balance.</div>
+          </div>
+        </div>
+
+        <div class="design-panel" id="panel-shape" role="tabpanel" aria-labelledby="tab-shape" hidden>
+          <div class="option-grid" id="shapeOptions">
+            <button type="button" class="option active" data-value="square" aria-pressed="true"><div class="shape-demo"><div class="squares"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div><strong>Square</strong><span>Maximum compatibility</span></button>
+            <button type="button" class="option" data-value="rounded" aria-pressed="false"><div class="shape-demo"><div class="squares round"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div><strong>Rounded</strong><span>Balanced custom style</span></button>
+            <button type="button" class="option" data-value="dots" aria-pressed="false"><div class="shape-demo"><div class="squares dots"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div><strong>Dots</strong><span>Modern, slightly less robust</span></button>
+          </div>
+          <div class="hint">Finder, timing, alignment, and format modules remain robust even when data modules are styled.</div>
+        </div>
+
+        <div class="design-panel" id="panel-logo" role="tabpanel" aria-labelledby="tab-logo" hidden>
+          <div class="upload" id="logoUpload">
+            <div style="font-weight:800;margin-bottom:8px">Add a center logo</div>
+            <div class="hint" id="logoMessage" style="margin:0 0 12px">PNG, JPG, or WebP. Processed entirely in your browser.</div>
+            <label for="logoInput">Choose image</label>
+            <input id="logoInput" type="file" accept="image/png,image/jpeg,image/webp">
+            <div class="hint">You can also drag and drop an image here. Files are re-encoded locally to strip metadata.</div>
+          </div>
+          <div class="logo-row">
+            <div class="logo-thumb" id="logoThumb"><span>None</span></div>
+            <div class="range">
+              <label for="logoSize"><strong>Logo size <span id="logoSizeText">18%</span></strong></label>
+              <input id="logoSize" type="range" min="12" max="24" value="18">
+            </div>
+            <button type="button" class="smallbtn" id="removeLogo">Remove</button>
+          </div>
+        </div>
+
+        <div class="design-panel" id="panel-colors" role="tabpanel" aria-labelledby="tab-colors" hidden>
+          <div class="color-grid">
+            <div>
+              <label for="fgColor"><strong>Foreground</strong></label>
+              <div class="color-row"><input id="fgColor" type="color" value="#17233f"><input id="fgHex" value="#17233f" maxlength="7" aria-label="Foreground hex color"></div>
+            </div>
+            <div>
+              <label for="bgColor"><strong>Background</strong></label>
+              <div class="color-row"><input id="bgColor" type="color" value="#ffffff"><input id="bgHex" value="#ffffff" maxlength="7" aria-label="Background hex color"></div>
+            </div>
+          </div>
+          <div class="quality-card" aria-live="polite">
+            <div class="quality-main">Scan quality <span class="quality-label" id="qualityLabel">Excellent</span></div>
+            <div><strong>Contrast <span id="contrastValue">—</span></strong><div class="hint" id="qualityHint">High-contrast design with a standards-compliant quiet zone.</div></div>
+          </div>
+        </div>
+
+        <div class="advanced">
+          <div><label for="ecc">Error correction</label><select id="ecc"><option value="L">Low · ~7%</option><option value="M">Medium · ~15%</option><option value="Q">Quartile · ~25%</option><option value="H">High · ~30%</option></select></div>
+          <div><label for="quiet">Quiet zone</label><select id="quiet"><option value="4">4 modules · standard</option><option value="6">6 modules</option><option value="8">8 modules</option><option value="10">10 modules</option></select></div>
+          <div><label for="pngSize">PNG width</label><select id="pngSize"><option value="512">512 px</option><option value="1024">1024 px</option><option value="2048">2048 px</option><option value="4096">4096 px</option></select></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <aside class="right" aria-labelledby="download-title">
+    <div class="preview-wrap">
+      <h2 class="preview-title" id="download-title"><span class="stepnum" aria-hidden="true">3</span>Download QR code</h2>
+      <div id="preview" class="preview-box placeholder"></div>
+      <div class="status" aria-live="polite">
+        <div class="status-left"><span class="dot" id="statusDot" aria-hidden="true"></span><span id="statusText">Enter content to generate a QR code</span></div>
+        <span class="pill" id="qrMeta">—</span>
+      </div>
+      <div class="meta-strip">
+        <div><strong>Generation</strong>Automatic best mask</div>
+        <div><strong>Privacy</strong>No network requests</div>
+      </div>
+      <button type="button" id="downloadPng" class="download" disabled>↓ Download PNG</button>
+      <div class="secondary-row">
+        <button type="button" id="downloadSvg" class="secondary" disabled>Download SVG</button>
+        <button type="button" id="copySvg" class="secondary" disabled>Copy SVG</button>
+        <button type="button" id="printQr" class="secondary" disabled>Print</button>
+        <button type="button" id="resetDesign" class="secondary">Reset design</button>
+      </div>
+      <div class="micro">Works from a local <code>.html</code> file or any static host. No analytics, uploads, APIs, CDNs, or external libraries. <kbd>Ctrl/⌘</kbd> + <kbd>Enter</kbd> downloads PNG.</div>
+    </div>
+  </aside>
+</div>
+
+<script>
+/*__QR_CORE__*/
+/*__APP__*/
+</script>
+</body>
+</html>
